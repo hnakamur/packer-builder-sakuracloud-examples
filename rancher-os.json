@@ -1,0 +1,36 @@
+{
+  "variables": {
+    "install_disk_device": "/dev/vda",
+    "ssh_public_key": "ssh-rsa _YOUR_SSH_PUBLIC_KEY_HERE_",
+    "rancher_ssh_password": "_RANCHER_USER_PASSWORD_HERE_"
+  },
+  "builders": [{
+    "type": "sakuracloud",
+    "zone": "is1b",
+    "us_keyboard": true,
+    "os_type": "iso",
+    "user_name": "rancher",
+    "password": "{{user `rancher_ssh_password`}}",
+    "iso_url": "https://github.com/rancher/os/releases/download/v0.7.1/rancheros.iso",
+    "iso_checksum": "3c715e3b7022379dac6abd468b269e56def9564177a3e935c7f93658695fdf06",
+    "iso_checksum_type": "sha256",
+    "boot_command": [
+      "<wait10><wait10>",
+      "echo 'ssh_authorized_keys:' > /tmp/cloud-config.yml<enter><wait>",
+      "echo '  - {{user `ssh_public_key`}}' >> /tmp/cloud-config.yml<enter><wait>",
+      "sudo ros install -c /tmp/cloud-config.yml -d {{user `install_disk_device`}}<enter><wait>",
+      "<wait5>y<enter>",
+      "<wait10><wait10><wait10><wait10><wait10><wait10>",
+      "<wait10><wait10>",
+      "<wait5>y<enter>",
+      "<wait10><wait10><wait10><wait10><wait10><wait10>",
+      "rancher<enter><wait><enter><wait>",
+      "sudo passwd rancher<enter><wait>",
+      "{{user `rancher_ssh_password`}}<enter><wait>",
+      "{{user `rancher_ssh_password`}}<enter><wait>",
+      "sudo passwd -d docker<enter><wait>"
+    ],
+    "boot_wait": "20s"
+
+  }]
+}
