@@ -1,0 +1,40 @@
+{
+  "variables": {
+    "install_disk_device": "/dev/vda",
+    "ssh_public_key": "_YOUR_SSH_PUBLIC_KEY_HERE_",
+    "ssh_password_hash": "_ADMIN_USER_PASSWORD_HERE_ see https://github.com/coreos/coreos-cloudinit/blob/master/Documentation/cloud-config.md#generating-a-password-hash for detail"
+  },
+  "builders": [{
+    "type": "sakuracloud",
+    "zone": "is1b",
+    "us_keyboard": true,
+    "os_type": "iso",
+    "user_name": "admin",
+    "password": "{{user `ssh_password`}}",
+    "iso_url": "https://stable.release.core-os.net/amd64-usr/current/coreos_production_iso_image.iso",
+    "iso_checksum": "1c8e7948bdc54980df87a9a2b08fa744104f977950002f1605b60bf44d2021b9",
+    "iso_checksum_type": "sha256",
+    "boot_command": [
+      "<wait10><wait10>",
+      "echo '#cloud-config' > /tmp/cloud-config.yml<enter><wait>",
+      "echo 'ssh_authorized_keys:' >> /tmp/cloud-config.yml<enter><wait>",
+      "echo '  - {{user `ssh_public_key`}}' >> /tmp/cloud-config.yml<enter><wait>",
+      "echo 'users:' >> /tmp/cloud-config.yml<enter><wait>",
+      "echo '  - name: admin' >> /tmp/cloud-config.yml<enter><wait>",
+      "echo '    passwd: {{user `ssh_password_hash`}}' >> /tmp/cloud-config.yml<enter><wait>",
+      "echo '    groups:' >> /tmp/cloud-config.yml<enter><wait>",
+      "echo '      - sudo' >> /tmp/cloud-config.yml<enter><wait>",
+      "echo '      - docker' >> /tmp/cloud-config.yml<enter><wait>",
+      "echo '    ssh-authorized-keys:' >> /tmp/cloud-config.yml<enter><wait>",
+      "echo '      - {{user `ssh_public_key`}}' >> /tmp/cloud-config.yml<enter><wait>",
+      "sudo su - root<enter><wait>",
+      "coreos-install -c /tmp/cloud-config.yml -d {{user `install_disk_device`}}<enter><wait>",
+      "<wait10><wait10><wait10><wait10><wait10><wait10>",
+      "reboot<enter><wait>",
+      "<wait10><wait10><wait10><wait10><wait10><wait10>",
+      "<wait10><wait10><wait10>"
+    ],
+    "boot_wait": "20s"
+
+  }]
+}
