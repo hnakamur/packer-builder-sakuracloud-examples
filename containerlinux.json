@@ -11,7 +11,7 @@
     "os_type": "iso",
     "user_name": "admin",
     "password": "{{user `ssh_password`}}",
-    "iso_url": "https://stable.release.core-os.net/amd64-usr/current/coreos_production_iso_image.iso",
+    "iso_url": "https://stable.release.core-os.net/amd64-usr/1185.5.0/coreos_production_iso_image.iso",
     "iso_checksum": "1c8e7948bdc54980df87a9a2b08fa744104f977950002f1605b60bf44d2021b9",
     "iso_checksum_type": "sha256",
     "boot_command": [
